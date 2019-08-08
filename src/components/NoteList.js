@@ -32,7 +32,7 @@ class NoteList extends React.Component {
           />
         ))}
       </ul>
-      <NoteAdder />
+      <NoteAdder/>
       </div>
     );
   }

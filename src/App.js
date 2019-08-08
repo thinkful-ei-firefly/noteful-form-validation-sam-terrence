@@ -103,7 +103,8 @@ class App extends Component {
                 <UserContext.Provider value ={{
                   notes: notes,
                   match: match,
-                  handleDelete: this.handleDelete
+                  handleDelete: this.handleDelete,
+                  folders: this.state.folders
                 }}> 
                   <NoteList />
                 </UserContext.Provider>
@@ -131,7 +132,7 @@ class App extends Component {
                   notes: notes,
                   match: match,
                   handleDelete: this.handleDelete,
-                  folders: this.state.folders
+                 
                 }}> 
                   <NotePage />
                 </UserContext.Provider>

@@ -8,16 +8,17 @@ class NoteAdder extends React.Component {
   
     render() {
         console.log(this.context);
-    return (
+        const folderOptions= [];
+        this.context.folders.forEach(
+            folder=>folderOptions.push(<option value={folder.id}>{folder.name}</option>)
+        )
+        return (
         <form>
             <h3>Add New Note</h3>
             <label>Name</label>
             <input type= 'text' name='newNoteName' ></input>
             <label>folder</label>
-            <select name= 'folderSelect'>
-                {this.context.folders.forEach(
-                    folder=> (<option value={folder.id}>{folder.name}</option>)
-                )}
+            <select name= 'folderSelect'>{folderOptions}              
             </select>
             <label>content</label>
             <input type='textarea' name='content'></input>
