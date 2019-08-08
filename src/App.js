@@ -6,6 +6,7 @@ import NoteList from "./components/NoteList";
 import NotePage from "./components/NotePage";
 import NoteSidebar from "./components/NoteSidebar";
 import UserContext from "./components/UserContext";
+import cuid from 'cuid';
 
 import "./App.css";
 
@@ -30,7 +31,6 @@ class App extends Component {
   }
 
   handleDelete = (id) => {
-    console.log('deleting '+id)
     fetch(`http://localhost:9090/notes/${id}`, {
       method: 'DELETE',
       headers: {
@@ -42,6 +42,29 @@ class App extends Component {
           notes: this.state.notes.filter(note => note.id !== id)
         })
       })
+  }
+
+  addFolder = (event) => {
+    console.log('adding folder')
+    event.preventDefault();
+    this.setState({loading: true})
+    const name = event.target.folderAdderInput.value
+    const folder = {
+      id: cuid(),
+      name: name
+    }
+    this.setState({folders: {...this.state.folders, folder}, loading:false})
+    // fetch(`http://localhost:9090/folders`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'content-type': 'application/json'
+    //   },
+    //   body: JSON.stringify(folder)
+    // })
+    //   .then(() => {
+    //     this.setState({folders: {...this.state.folders, folder}, loading: true}, 
+    //       this.setState({loading: false}))
+    //   })
   }
   
 
@@ -55,6 +78,7 @@ class App extends Component {
         <UserContext.Provider value ={{
           folders: folders,
           notes: notes,
+          handleFolderSubmit: this.addFolder
         }}>
           <Switch>
             <Route
