@@ -47,24 +47,22 @@ class App extends Component {
   addFolder = (event) => {
     console.log('adding folder')
     event.preventDefault();
-    this.setState({loading: true})
     const name = event.target.folderAdderInput.value
     const folder = {
       id: cuid(),
       name: name
     }
-    this.setState({folders: {...this.state.folders, folder}, loading:false})
-    // fetch(`http://localhost:9090/folders`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'content-type': 'application/json'
-    //   },
-    //   body: JSON.stringify(folder)
-    // })
-    //   .then(() => {
-    //     this.setState({folders: {...this.state.folders, folder}, loading: true}, 
-    //       this.setState({loading: false}))
-    //   })
+    event.target.folderAdderInput.value = '';
+    fetch(`http://localhost:9090/folders`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(folder)
+    })
+      .then(() => {
+        this.setState({folders: [...this.state.folders, folder]})
+      })
   }
   
 
