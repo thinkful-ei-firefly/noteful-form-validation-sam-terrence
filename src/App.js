@@ -7,6 +7,7 @@ import NotePage from "./components/NotePage";
 import NoteSidebar from "./components/NoteSidebar";
 import UserContext from "./components/UserContext";
 import cuid from 'cuid';
+import ErrorPage from './ErrorPage';
 
 import "./App.css";
 
@@ -15,11 +16,17 @@ class App extends Component {
   state = {
     folders: [],
     notes: [],
-    loading: true
+    loading: true,
   };
   
   componentDidMount() {
     fetch('http://localhost:9090/db')
+      .then(res=> {
+        if (!res.ok) {
+          throw new Error('Errror: '+res.status)
+        }
+        return res
+      })
       .then(res => res.json())
       .then(resJson => {
         this.setState({
@@ -27,7 +34,8 @@ class App extends Component {
           notes: resJson.notes,
           loading: false
         })
-      });
+      })
+      .catch(error => console.log(error));
   }
 
   handleDelete = (id) => {
@@ -37,22 +45,28 @@ class App extends Component {
         'content-type': 'application/json'
       }
     })
+      .then(res=> {
+        if (!res.ok) {
+          throw new Error('Errror: '+res.status)
+        }
+        return res
+      })
       .then(() => {
         this.setState({
           notes: this.state.notes.filter(note => note.id !== id)
         })
       })
+      .catch(error => console.log(error));
   }
 
   addFolder = (event) => {
-    console.log('adding folder')
     event.preventDefault();
     const name = event.target.folderAdderInput.value
     const folder = {
       id: cuid(),
       name: name
     }
-    event.target.folderAdderInput.value = '';
+    event.target.folderAdderInput.value=''
     fetch(`http://localhost:9090/folders`, {
       method: 'POST',
       headers: {
@@ -60,9 +74,44 @@ class App extends Component {
       },
       body: JSON.stringify(folder)
     })
+      .then(res=> {
+        if (!res.ok) {
+          throw new Error('Errror: '+res.status)
+        }
+        return res
+      })
       .then(() => {
         this.setState({folders: [...this.state.folders, folder]})
       })
+      .catch(error => console.log(error));
+  }
+
+  addNote = (event) => {
+    event.preventDefault();
+    const note = {
+      id: cuid(),
+      name: event.target.newNoteName.value,
+      modified: new Date(),
+      folderId: event.target.newNoteFolder.value,
+      content: event.target.newNoteContent.value
+    }
+    fetch(`http://localhost:9090/notes`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(note)
+    })
+      .then(res=> {
+        if (!res.ok) {
+          throw new Error('Errror: '+res.status)
+        }
+        return res
+      })
+      .then(() => {
+        this.setState({notes: [...this.state.notes, note]})
+      })
+      .catch(error => console.log(error));
   }
   
 
@@ -71,6 +120,7 @@ class App extends Component {
     if (loading) return <div>loading</div>
     return (
       <div className="App">
+        <ErrorPage>
         <Header />
         <div className="sidebar">
         <UserContext.Provider value ={{
@@ -104,7 +154,8 @@ class App extends Component {
                   notes: notes,
                   match: match,
                   handleDelete: this.handleDelete,
-                  folders: this.state.folders
+                  folders: this.state.folders,
+                  handleAdd: this.addNote
                 }}> 
                   <NoteList />
                 </UserContext.Provider>
@@ -118,7 +169,8 @@ class App extends Component {
                   notes: notes,
                   match: match,
                   handleDelete: this.handleDelete,
-                  folders: this.state.folders
+                  folders: this.state.folders,
+                  handleAdd: this.addNote
                 }}> 
                   <NoteList />
                 </UserContext.Provider>
@@ -131,8 +183,7 @@ class App extends Component {
                 <UserContext.Provider value ={{
                   notes: notes,
                   match: match,
-                  handleDelete: this.handleDelete,
-                 
+                  handleDelete: this.handleDelete
                 }}> 
                   <NotePage />
                 </UserContext.Provider>
@@ -140,6 +191,7 @@ class App extends Component {
             />
           </Switch>
         </div>
+        </ErrorPage>
       </div>
     );
   }

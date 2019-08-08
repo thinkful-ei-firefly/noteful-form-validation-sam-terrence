@@ -9,7 +9,7 @@ class FolderAdder extends React.Component {
     return (
       <form onSubmit={(event) => this.context.handleFolderSubmit(event)}>
         <label>Add a new folder:</label>
-        <input type="text" name="folderAdderInput"></input>
+        <input type="text" name="folderAdderInput" required></input>
         <button type="submit">Add</button>
       </form >
     )

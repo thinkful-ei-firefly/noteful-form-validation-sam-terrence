@@ -7,7 +7,6 @@ class FolderList extends React.Component {
   static contextType = UserContext;
   render() {
     const { folders } =this.context;
-    console.log(folders)
     return (
       <div>
         <ul className="folder-list">
