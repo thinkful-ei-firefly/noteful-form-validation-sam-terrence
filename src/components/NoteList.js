@@ -2,6 +2,7 @@ import React from "react";
 import Note from "./Note";
 import "./note-list.css";
 import UserContext from './UserContext';
+import NoteAdder from './NoteAdder';
 
 class NoteList extends React.Component {
   static contextType = UserContext;
@@ -20,6 +21,7 @@ class NoteList extends React.Component {
   
   render () {
     return (
+      <div>
       <ul>
         {this.findNotes().map(note => (
           <Note
@@ -30,6 +32,8 @@ class NoteList extends React.Component {
           />
         ))}
       </ul>
+      <NoteAdder />
+      </div>
     );
   }
   
